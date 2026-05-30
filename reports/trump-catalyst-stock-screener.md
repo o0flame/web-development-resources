@@ -203,14 +203,14 @@ present); the four supporting dimensions act as **multipliers, bonuses, or a har
 
 ```
 Core      = sqrt( BP × TC )                 # both axes required
-Adjusted  = Core × Timing × Sentiment + SupplyChainBonus
+Adjusted  = Core × Timing × Sentiment + SupplyChainBonus + DisclosureBonus
 Final     = Adjusted × LiquidityRiskGate    # gate ∈ {0, 1}; 0 = disqualified
                                             # (and apply PunishedSector veto → 0)
 ```
 
 Each of **BP** and **TC** is 0–100. `Timing` and `Sentiment` are multipliers in **[0.8, 1.2]**.
-`SupplyChainBonus` is **0–10**. `LiquidityRiskGate` is a pass/fail **{0,1}**. A stock in a
-**punished sector** (theme #9) is vetoed to 0 regardless of other scores.
+`SupplyChainBonus` and `DisclosureBonus` are each **0–10**. `LiquidityRiskGate` is a pass/fail
+**{0,1}**. A stock in a **punished sector** (theme #9) is vetoed to 0 regardless of other scores.
 
 ### 6.2 Dimension A — Breakout / Upside Potential (BP, 0–100)
 
@@ -250,6 +250,15 @@ Sub-factor weights sum to 100. Score each 0–100, then weight.
   packaging/equipment suppliers to Micron, data-center power/cooling for Stargate, ServiceNow
   ecosystem, defense primes' subs. Rewards the "pick-and-shovel" names that ride a confirmed
   leader's wave.
+- **Disclosed Politically-Connected Accumulation — DPA (+0 to +10):** A *confirmation* overlay
+  from **public** financial-disclosure filings (STOCK Act periodic transaction reports of members
+  of Congress / senior officials, and similar mandated disclosures). When a cluster of
+  politically-connected insiders is *disclosed* buying a name, it corroborates that the
+  policy-tailwind + conviction overlap is real. Scoring: **+10** = a large, recent, *discretionary*
+  disclosed buy or new position in a name that already scores well on BP×TC; **+5** = a smaller
+  disclosed buy; **0** = "non-discretionary"/managed-account/blind-trust trades (no conviction
+  credit); **negative flag** = disclosed *net selling* (treat as a yellow flag — trim the
+  Sentiment multiplier). See §8.1 for a worked example. *Caveats are serious — read §9.*
 - **Liquidity & Risk Gate ({0,1} — hard pass/fail):** Require a minimum to avoid illiquid pump
   traps: e.g., **market cap ≥ $2B**, **ADV ≥ $20M/day**, tight spreads, no going-concern/dilution
   red flags, no active fraud/SEC action. Fail → **Final = 0.** This dimension is a *safety
@@ -323,6 +332,51 @@ are **hand-estimated for illustration** and must be recomputed from live data. S
 \* "High-conviction" here means *high rubric score*, **not** a recommendation. Crowding/valuation
 (Sentiment multiplier) is precisely the risk these names carry.
 
+### 8.1 Overlay — cross-referencing a disclosed transaction report
+
+A real-world way to *apply the DPA dimension* (§6.4) is to overlay a politically-connected
+disclosure filing onto the screen. Below is one such disclosed transaction report (provided by
+the user; source watermark *"AB KUAI DONG"*). **Provenance note:** the specific filer is not
+identified on the image and is **not independently verified here** — treat it as an *illustration
+of the method*, and confirm the source/filer before relying on it.
+
+| Ticker | Disclosed action | DPA read |
+|---|---|---|
+| **NVDA** Nvidia | Large buy, $1M–5M | +10 — conviction buy, AI leader |
+| **AVGO** Broadcom | Large **new position**, $1M–5M | +10 — new-position conviction, AI/semi |
+| **TXN** Texas Instruments | ~$1M+ buy | +5 — analog/reshoring |
+| **SNPS** Synopsys | ~$1M+ buy | +5 — **EDA "picks & shovels"** |
+| **CDNS** Cadence | ~$1M+ buy | +5 — **EDA "picks & shovels"** |
+| **INTC** Intel | Multiple adds since Mar; some "non-discretionary" | **0** — managed/non-discretionary, discount |
+| **AAPL** Apple | Large buy, $1M–5M | +10 — $600B US pledge name |
+| **ORCL** Oracle | Up to $5M buy | +10 — Stargate / gov cloud |
+| **ADBE** Adobe | $1M+ buy | +5 — enterprise AI software |
+| **NOW** ServiceNow | $1M+ buy | +5 — **confirms our case study** |
+| **WDAY** Workday | $1M+ buy | +5 — enterprise SaaS |
+| **MSFT** Microsoft | Bought, but **larger sells** | **− flag** — net sell |
+| **AMZN** Amazon | Bought, but **larger sells** | **− flag** — net sell |
+| **META** Meta | Small buy, **larger sells** | **− flag** — net sell |
+| **DELL** Dell (C shares) | Buy 2026-02-10, $1M–5M | +10 — AI-server hardware |
+| **BA** Boeing | Up to $5M buy | +10 — defense/aerospace reshoring |
+
+**What the cluster reveals (and how it sharpens the screen):**
+
+- **Concentration confirms the thesis.** The buys pile into exactly the confirmed-theme buckets
+  from §4: **AI/semis** (NVDA, AVGO, TXN, INTC, DELL), **EDA chip-design tools** (SNPS, CDNS —
+  the textbook *supply-chain second-derivative*, §6.4), and **enterprise-AI software** (ORCL,
+  ADBE, NOW, WDAY). ServiceNow showing up *independently corroborates* the §3.2 case study.
+- **New candidates surfaced** that weren't on the §8 watchlist and score well on the rubric:
+  **SNPS** and **CDNS** (EDA duopoly — high BP, supply-chain bonus), **TXN**, **WDAY**, **DELL**.
+- **The divergence is the most interesting signal:** *buying* semis/EDA while *net-selling*
+  **MSFT, AMZN, META**. Read it as a disclosed **rotation** out of crowded mega-cap platforms
+  into chips / chip-design / AI-infrastructure — which *lowers* the Sentiment multiplier on the
+  net-sold names and *raises* DPA conviction on the buys.
+- **Discount the noise:** Intel's adds are flagged **"non-discretionary"** (managed mandate) →
+  **no conviction credit** under the DPA rule. Don't treat it as a signal.
+
+This overlay does not change the *core* of the model — a name still must clear BP×TC and the
+liquidity gate. DPA is a **+10 tie-breaker / confirmation**, not a reason to skip the work.
+
 ---
 
 ## 9. Risk register, false-signal traps & ethics
@@ -342,6 +396,18 @@ are **hand-estimated for illustration** and must be recomputed from live data. S
 - **Single-source/“noise” catalysts:** discard unverified items (e.g., the unconfirmed "Trump's
   ServiceNow stake" headline). Require *credible, primary* confirmation (White House/GSA/SEC).
 
+**Disclosure-overlay (DPA) risks — read before using §8.1**
+- **Reporting lag:** STOCK Act periodic transaction reports can be filed up to ~30–45 days after
+  the trade. By the time you see it, the move may be done — you are *late*, not early.
+- **Broad ranges:** disclosures report **bands** (e.g., "$1M–5M"), not exact size, price, or
+  remaining position. You cannot infer conviction precisely.
+- **Non-discretionary / managed accounts:** trades flagged "non-discretionary" (or in a blind
+  trust) are **not** the filer's conviction — give them **zero** DPA credit (e.g., Intel above).
+- **Provenance:** confirm *whose* disclosure it is from a primary source before trusting it; a
+  watermarked screenshot is not verification.
+- **Clustering ≠ causation, and ≠ legality of mirroring being a guarantee of returns.** Many
+  disclosed "buys" sit in managed index-like accounts and carry no signal at all.
+
 **Process safeguards**
 - Pre-define entry, **stop/invalidation**, size, and a **catalyst-failure exit** before entering.
 - Treat the watchlist as candidates to *study*, never an instruction to buy.
@@ -352,6 +418,10 @@ are **hand-estimated for illustration** and must be recomputed from live data. S
   never material non-public information. Trading on MNPI is a crime.
 - **No front-running of government action** based on non-public knowledge. If you have access to
   non-public government or corporate information, this framework does **not** apply to you.
+- **Mirroring *disclosed* trades is legal** — STOCK Act / official financial disclosures are
+  public records, and trackers (Quiver Quantitative, Unusual Whales, Capitol Trades) aggregate
+  them openly. Using that public data is fine; it is still **not advice** and carries the lag/
+  band/managed-account caveats in §9.
 - **Not advice.** See the banner in §0. Consult a licensed professional.
 
 ---
@@ -442,6 +512,12 @@ Tier:  80+ High-conviction | 65–79 Active | 50–64 Monitor | <50 Pass
 - PEG ratio: https://en.wikipedia.org/wiki/PEG_ratio
 - Rule of 40 (McKinsey): https://www.mckinsey.com/industries/technology-media-and-telecommunications/our-insights/saas-and-the-rule-of-40-keys-to-the-critical-value-creation-metric
 - Gamma exposure (GEX): https://spotgamma.com/gamma-exposure-gex/
+
+**Disclosure tracking (DPA overlay, §8.1)**
+- STOCK Act overview: https://en.wikipedia.org/wiki/STOCK_Act
+- Capitol Trades (congressional disclosures): https://www.capitoltrades.com/
+- Quiver Quantitative — congress trading: https://www.quiverquant.com/congresstrading/
+- Disclosed transaction report table (user-provided image, watermark "AB KUAI DONG") — *filer unverified*
 
 ---
 
